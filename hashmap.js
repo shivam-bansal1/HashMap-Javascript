@@ -1,3 +1,6 @@
+import { LinkedList } from "./linkedLists.js";
+const ll = new LinkedList();
+
 class HashMap {
   constructor() {
     this.capacity = 16;
@@ -25,11 +28,25 @@ class HashMap {
 
     // add new pair
     if (this.buckets[hashCode] == -1) {
-      this.buckets[hashCode] = { [key]: value };
+      const ll = new LinkedList();
+      ll.append({ key, value });
+      this.buckets[hashCode] = ll;
     }
-    // Update existing value of the key
-    else if (this.buckets[hashCode][key] !== undefined) {
-      this.buckets[hashCode][key] = value;
+    // Update existing value of the key or add new key,value pair
+    else {
+      const ll = this.buckets[hashCode];
+      let currentNode = ll.getHead();
+
+      while (currentNode !== null) {
+        if (currentNode.value.key === key) {
+          currentNode.value.value = value;
+          return;
+        }
+        currentNode = currentNode.nextNode;
+      }
+
+      // Add new node in linked list at last
+      ll.append({ key, value });
     }
   }
 }
@@ -37,9 +54,8 @@ class HashMap {
 const map = new HashMap();
 map.set("shivam", 6);
 map.set("abc", 3);
+map.set("stuv", 39);
 map.set("efghi", 5);
-map.get();
-map.set("efghi", 123);
-map.get();
-map.set("efghi", 0);
+map.set("efghi", 23);
+map.set("efghi", 90);
 map.get();
