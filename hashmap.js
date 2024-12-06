@@ -5,7 +5,7 @@ class HashMap {
   constructor() {
     this.capacity = 16;
     this.loadFactor = 0.8;
-    this.buckets = new Array(this.capacity).fill(-1);
+    this.buckets = new Array(this.capacity);
   }
 
   hash(key) {
@@ -18,7 +18,7 @@ class HashMap {
     return hashCode;
   }
 
-  get() {
+  print() {
     for (let i = 0; i < this.buckets.length; i++) console.log(this.buckets[i]);
     return this.buckets;
   }
@@ -27,7 +27,7 @@ class HashMap {
     const hashCode = this.hash(key);
 
     // add new pair
-    if (this.buckets[hashCode] == -1) {
+    if (this.buckets[hashCode] === undefined) {
       const ll = new LinkedList();
       ll.append({ key, value });
       this.buckets[hashCode] = ll;
@@ -35,19 +35,46 @@ class HashMap {
     // Update existing value of the key or add new key,value pair
     else {
       const ll = this.buckets[hashCode];
-      let currentNode = ll.getHead();
+      let existingNode = ll.findNodeByKey(key);
 
-      while (currentNode !== null) {
-        if (currentNode.value.key === key) {
-          currentNode.value.value = value;
-          return;
-        }
-        currentNode = currentNode.nextNode;
+      if (existingNode) {
+        existingNode.value.value = value;
+      } else {
+        // Add new node in linked list at last
+        ll.append({ key, value });
       }
-
-      // Add new node in linked list at last
-      ll.append({ key, value });
     }
+  }
+
+  get(key) {
+    const hashCode = this.hash(key);
+    const ll = this.buckets[hashCode];
+
+    if (ll === undefined) return false;
+
+    const node = ll.findNodeByKey(key);
+    if (node !== null) return node.value.value;
+    return false;
+  }
+
+  has(key) {
+    const hashCode = this.hash(key);
+    const ll = this.buckets[hashCode];
+
+    if (ll === undefined) return false;
+    else {
+      if (ll.findNodeByKey(key)) return true;
+    }
+    return false;
+  }
+
+  remove(key) {
+    const hashCode = this.hash(key);
+    const ll = this.buckets[hashCode];
+
+    if (ll === undefined) return false;
+
+    return ll.removeNodeByKey(key);
   }
 }
 
@@ -57,5 +84,8 @@ map.set("abc", 3);
 map.set("stuv", 39);
 map.set("efghi", 5);
 map.set("efghi", 23);
-map.set("efghi", 90);
-map.get();
+map.print();
+console.log(map.remove("efghi"));
+console.log(map.remove("stuv"));
+console.log(map.remove("abc"));
+map.print();

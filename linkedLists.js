@@ -145,7 +145,7 @@ export class LinkedList {
     else if (index === this.size() - 1) {
       let previousNode = this.head;
 
-      while (previousNode.nextNode != this.tail) {
+      while (previousNode.nextNode != null) {
         previousNode = previousNode.nextNode;
       }
 
@@ -179,5 +179,42 @@ export class LinkedList {
 
     resultString += "null";
     return resultString;
+  }
+
+  findNodeByKey(key) {
+    let currentNode = this.getHead();
+
+    while (currentNode !== null) {
+      if (currentNode.value.key === key) return currentNode;
+      currentNode = currentNode.nextNode;
+    }
+    return null;
+  }
+
+  removeNodeByKey(key) {
+    let currentNode = this.getHead();
+    let previousNode = null;
+
+    while (currentNode !== null) {
+      if (currentNode.value.key === key) {
+        if (previousNode !== null) {
+          previousNode.nextNode = currentNode.nextNode;
+          if (currentNode === this.tail) {
+            this.tail = previousNode;
+          }
+        } else {
+          // Current node is head node
+          this.head = currentNode.nextNode;
+          if (this.head === null) {
+            this.tail = null;
+          }
+        }
+        return true;
+      }
+      previousNode = currentNode;
+      currentNode = currentNode.nextNode;
+    }
+
+    return false;
   }
 }
