@@ -1,11 +1,12 @@
 import { LinkedList } from "./linkedLists.js";
 const ll = new LinkedList();
 
-class HashMap {
+export class HashMap {
   constructor() {
     this.capacity = 16;
-    this.loadFactor = 0.8;
+    this.loadFactor = 0.75;
     this.buckets = new Array(this.capacity);
+    this.keyCount = 0; // Maintains the count of keys in HashMap
   }
 
   hash(key) {
@@ -26,11 +27,16 @@ class HashMap {
   set(key, value) {
     const hashCode = this.hash(key);
 
+    // Double the hashmap as it reaches load factor
+    if (this.length() / this.capacity >= this.loadFactor) {
+      this.growBuckets();
+    }
     // add new pair
     if (this.buckets[hashCode] === undefined) {
       const ll = new LinkedList();
       ll.append({ key, value });
       this.buckets[hashCode] = ll;
+      this.keyCount++;
     }
     // Update existing value of the key or add new key,value pair
     else {
@@ -42,6 +48,27 @@ class HashMap {
       } else {
         // Add new node in linked list at last
         ll.append({ key, value });
+        this.keyCount++;
+      }
+    }
+  }
+
+  growBuckets() {
+    const oldBuckets = this.buckets;
+    this.capacity *= 2;
+    this.buckets = new Array(this.capacity);
+    this.keyCount = 0;
+
+    for (let i = 0; i < oldBuckets.length; i++) {
+      const ll = oldBuckets[i];
+
+      if (ll !== undefined) {
+        let currentNode = ll.getHead();
+        while (currentNode !== null) {
+          const { key, value } = currentNode.value;
+          this.set(key, value);
+          currentNode = currentNode.nextNode;
+        }
       }
     }
   }
@@ -74,27 +101,17 @@ class HashMap {
 
     if (ll === undefined) return false;
 
+    this.keyCount--;
     return ll.removeNodeByKey(key);
   }
 
   length() {
-    let totalKeys = 0;
-    for (let bucket = 0; bucket < this.capacity; bucket++) {
-      let ll = this.buckets[bucket];
-
-      if (ll !== undefined) {
-        let currentNode = ll.getHead();
-        while (currentNode !== null) {
-          totalKeys += 1;
-          currentNode = currentNode.nextNode;
-        }
-      }
-    }
-    return totalKeys;
+    return this.keyCount;
   }
 
   clear() {
     this.buckets = new Array(this.capacity);
+    this.keyCount = 0;
   }
 
   keys() {
@@ -145,11 +162,3 @@ class HashMap {
     return entriesList;
   }
 }
-
-const map = new HashMap();
-map.set("shivam", 6);
-map.set("abc", 3);
-map.set("stuv", 39);
-map.set("efghi", 5);
-map.set("efghi", 23);
-console.log(map.entries());
