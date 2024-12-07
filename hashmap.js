@@ -76,6 +76,74 @@ class HashMap {
 
     return ll.removeNodeByKey(key);
   }
+
+  length() {
+    let totalKeys = 0;
+    for (let bucket = 0; bucket < this.capacity; bucket++) {
+      let ll = this.buckets[bucket];
+
+      if (ll !== undefined) {
+        let currentNode = ll.getHead();
+        while (currentNode !== null) {
+          totalKeys += 1;
+          currentNode = currentNode.nextNode;
+        }
+      }
+    }
+    return totalKeys;
+  }
+
+  clear() {
+    this.buckets = new Array(this.capacity);
+  }
+
+  keys() {
+    let keysList = [];
+    for (let bucket = 0; bucket < this.capacity; bucket++) {
+      let ll = this.buckets[bucket];
+
+      if (ll !== undefined) {
+        let currentNode = ll.getHead();
+        while (currentNode !== null) {
+          keysList.push(currentNode.value.key);
+          currentNode = currentNode.nextNode;
+        }
+      }
+    }
+    return keysList;
+  }
+
+  values() {
+    let valuesList = [];
+    for (let bucket = 0; bucket < this.capacity; bucket++) {
+      let ll = this.buckets[bucket];
+
+      if (ll !== undefined) {
+        let currentNode = ll.getHead();
+        while (currentNode !== null) {
+          valuesList.push(currentNode.value.value);
+          currentNode = currentNode.nextNode;
+        }
+      }
+    }
+    return valuesList;
+  }
+
+  entries() {
+    let entriesList = [];
+    for (let bucket = 0; bucket < this.capacity; bucket++) {
+      let ll = this.buckets[bucket];
+
+      if (ll !== undefined) {
+        let currentNode = ll.getHead();
+        while (currentNode !== null) {
+          entriesList.push([currentNode.value.key, currentNode.value.value]);
+          currentNode = currentNode.nextNode;
+        }
+      }
+    }
+    return entriesList;
+  }
 }
 
 const map = new HashMap();
@@ -84,8 +152,4 @@ map.set("abc", 3);
 map.set("stuv", 39);
 map.set("efghi", 5);
 map.set("efghi", 23);
-map.print();
-console.log(map.remove("efghi"));
-console.log(map.remove("stuv"));
-console.log(map.remove("abc"));
-map.print();
+console.log(map.entries());
